@@ -28,16 +28,9 @@ based on QuectelM10 chip.
 #define _GSM_RXPIN_ 3	
 
 
-#ifdef UNO
 GSM::GSM():_cell(_GSM_TXPIN_,_GSM_RXPIN_),_tf(_cell, 10),_status(IDLE){
 };
-#endif
-/*#ifdef MEGA
-GSM::GSM(){
-	_cell.begin(9600);
-};
-#endif
-*/
+
 
 int GSM::begin(long baud_rate){
 	int response=-1;

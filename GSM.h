@@ -2,7 +2,6 @@
 #define GSM_H
 
 #define UNO
-//#define MEGA
 
 #include <SoftwareSerial.h>
 #include <inttypes.h>
@@ -19,10 +18,6 @@
 
 //#define DEBUG_ON
 
-
-#ifdef MEGA
-	#include "HWSerial.h"
-#endif
 
 // if defined - debug print is enabled with possibility to print out 
 // debug texts to the terminal program
@@ -189,12 +184,7 @@ class GSM
     char InitSMSMemory(void);
 
   protected:
-	#ifdef MEGA
-		HWSerial _cell;
-	#endif
-	#ifdef UNO
 		SoftwareSerial _cell;
-	#endif
     int isIP(const char* cadena);
 
   public:

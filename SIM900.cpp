@@ -145,19 +145,12 @@ boolean SIMCOM900::readSMS(char* msg, int msglength, char* number, int nlength)
   {
     //index=_tf.getValue();
 	index=_cell.read();
-	#ifdef UNO
-		_tf.getString("\"+", "\"", number, nlength);
-	#endif
-	#ifdef MEGA
-		_cell.getString("\"+", "\"", number, nlength);
-	#endif
-	#ifdef UNO
-		_tf.getString("\n", "\nOK", msg, msglength);
-	#endif
-	#ifdef MEGA
-		_cell.getString("\n", "\nOK", msg, msglength);
-	#endif
-    SimpleWrite("AT+CMGD=");
+
+	_tf.getString("\"+", "\"", number, nlength);
+
+	_tf.getString("\n", "\nOK", msg, msglength);
+
+  SimpleWrite("AT+CMGD=");
 	SimpleWriteln(index);
     gsm.WaitResp(5000, 50, "OK"); 
     return true;
@@ -176,12 +169,9 @@ boolean SIMCOM900::readCall(char* number, int nlength)
   if(gsm.WaitResp(5000, 50, "+CLIP: \"")!=RX_FINISHED_STR_RECV)
   //if(_tf.find("+CLIP: \""))
   {
-	#ifdef UNO
-		_tf.getString("", "\"", number, nlength);
-	#endif
-	#ifdef MEGA
-		_cell.getString("", "\"", number, nlength);
-	#endif
+
+	_tf.getString("", "\"", number, nlength);
+
     SimpleWriteln("ATH");
     delay(1000);
     //_cell.flush();
@@ -260,12 +250,8 @@ int SIMCOM900::getCCI(char *cci)
   SimpleWriteln("AT+QCCID");
   
   //Read response from modem
-  #ifdef UNO
 	_tf.getString("AT+QCCID\r\r\r\n","\r\n",cci, 21);
-  #endif
-  #ifdef MEGA
-	_cell.getString("AT+QCCID\r\r\r\n","\r\n",cci, 21);
-  #endif
+
   
   //Expect "OK".
   if(gsm.WaitResp(5000, 50, "OK")!=RX_FINISHED_STR_NOT_RECV)
@@ -285,12 +271,8 @@ int SIMCOM900::getIMEI(char *imei)
   SimpleWriteln("AT+GSN");
   
   //Read response from modem
-  #ifdef UNO
 	_tf.getString("\r\n","\r\n",imei, 16);
-  #endif
-  #ifdef MEGA
-	_cell.getString("\r\n","\r\n",imei, 16);
-  #endif
+
   
   //Expect "OK".
   if(gsm.WaitResp(5000, 50, "OK")!=RX_FINISHED_STR_NOT_RECV)
