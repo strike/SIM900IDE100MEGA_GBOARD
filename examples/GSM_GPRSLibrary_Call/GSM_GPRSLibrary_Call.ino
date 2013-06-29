@@ -30,12 +30,12 @@ void setup()
   pinMode(pin,INPUT);
   //Serial connection.
   Serial.begin(9600);
-  Serial.println("GSM Shield testing.");
+  Serial.println(F("GSM Shield testing."));
   //Start configuration of shield with baudrate.
   //For http uses is raccomanded to use 4800 or slower.
   if (gsm.begin(2400))
-    Serial.println("\nstatus=READY");
-  else Serial.println("\nstatus=IDLE");
+    Serial.println(F("\nstatus=READY"));
+  else Serial.println(F("\nstatus=IDLE"));
 };
 
 void loop() 

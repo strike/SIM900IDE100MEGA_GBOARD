@@ -188,9 +188,7 @@ class GSM
     int isIP(const char* cadena);
 
   public:
-	#ifdef UNO
 		WideTextFinder _tf;
-	#endif
     inline void setStatus(GSM_st_e status) { _status = status; }  
     GSM();
     inline int getStatus(){   return _status; };
@@ -204,10 +202,12 @@ class GSM
     byte WaitResp(uint16_t start_comm_tmout, uint16_t max_interchar_tmout, 
     char const *expected_resp_string);
     char SendATCmdWaitResp(char const *AT_cmd_string,
-	uint16_t start_comm_tmout, uint16_t max_interchar_tmout,
-	char const *response_string,
-	byte no_of_attempts);
-	void Echo(byte state);
+      uint16_t start_comm_tmout, uint16_t max_interchar_tmout,
+      char const *response_string, byte no_of_attempts);
+    char SendATCmdWaitResp(const __FlashStringHelper *AT_cmd_string,
+      uint16_t start_comm_tmout, uint16_t max_interchar_tmout,
+      char const *response_string, byte no_of_attempts);
+  	void Echo(byte state);
 
 
 	//-----------------------

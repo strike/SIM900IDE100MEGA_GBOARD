@@ -27,19 +27,19 @@ void setup()
 {
   //Serial connection.
   Serial.begin(9600);
-  Serial.println("GSM Shield testing.");
+  Serial.println(F("GSM Shield testing."));
   //Start configuration of shield with baudrate.
   //For http uses is raccomanded to use 4800 or slower.
   if (gsm.begin(2400)){
-    Serial.println("\nstatus=READY");
+    Serial.println(F("\nstatus=READY"));
     started=true;  
   }
-  else Serial.println("\nstatus=IDLE");
+  else Serial.println(F("\nstatus=IDLE"));
   
   if(started){
     //Enable this two lines if you want to send an SMS.
     //if (sms.SendSMS("3471234567", "Arduino SMS"))
-      //Serial.println("\nSMS sent OK");
+      //Serial.println(F("\nSMS sent OK"));
   }
 
 };

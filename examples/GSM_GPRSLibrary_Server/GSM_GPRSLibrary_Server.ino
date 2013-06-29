@@ -27,25 +27,25 @@ void setup()
 {
   //Serial connection.
   Serial.begin(9600);
-  Serial.println("GSM Shield testing.");
+  Serial.println(F("GSM Shield testing."));
   //Start configuration of shield with baudrate.
   //For http uses is raccomanded to use 4800 or slower.
   if (gsm.begin(2400)){
-    Serial.println("\nstatus=READY");
+    Serial.println(F("\nstatus=READY"));
     started=true;  
   }
-  else Serial.println("\nstatus=IDLE");
+  else Serial.println(F("\nstatus=IDLE"));
   
   if(started){
     //GPRS attach, put in order APN, username and password.
     //If no needed auth let them blank.
     if (inet.attachGPRS("internet.wind", "", ""))
-      Serial.println("status=ATTACHED");
-    else Serial.println("status=ERROR");
+      Serial.println(F("status=ATTACHED"));
+    else Serial.println(F("status=ERROR"));
     delay(1000);
     
     //Read IP address.
-    gsm.SimpleWriteln("AT+CIFSR");
+    gsm.SimpleWriteln(F("AT+CIFSR"));
     delay(5000);
     int i=0;
     while(i<20){
@@ -58,8 +58,8 @@ void setup()
     Serial.println(msg);
     delay(5000);
     if (inet.connectTCPServer(80))
-      Serial.println("status=TCPSERVERWAIT");
-    else Serial.println("ERROR in Server");
+      Serial.println(F("status=TCPSERVERWAIT"));
+    else Serial.println(F("ERROR in Server"));
     lasttime=millis();
   }
 };
@@ -91,15 +91,15 @@ void serialhwread(){
     
     inSerial[i]='\0';
     if(!strcmp(inSerial,"/END")){
-      Serial.println("_");
+      Serial.println(F("_"));
       inSerial[0]=0x1a;
       inSerial[1]='\0';
       gsm.SimpleWriteln(inSerial);
     }
     //Send a saved AT command using serial port.
     if(!strcmp(inSerial,"TEST")){
-      Serial.println("SIGNAL QUALITY");
-      gsm.SimpleWriteln("AT+CSQ");
+      Serial.println(F("SIGNAL QUALITY"));
+      gsm.SimpleWriteln(F("AT+CSQ"));
     }
     //Read last message saved.
     if(!strcmp(inSerial,"MSG")){

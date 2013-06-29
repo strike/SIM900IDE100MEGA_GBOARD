@@ -26,25 +26,25 @@ void setup()
 {
   //Serial connection.
   Serial.begin(9600);
-  Serial.println("GSM Shield testing.");
+  Serial.println(F("GSM Shield testing."));
   //Start configuration of shield with baudrate.
   //For http uses is raccomanded to use 4800 or slower.
   if (gsm.begin(4800)){
-    Serial.println("\nstatus=READY");
+    Serial.println(F("\nstatus=READY"));
     started=true;  
     gsm.forceON();
   }
-  else Serial.println("\nstatus=IDLE");
+  else Serial.println(F("\nstatus=IDLE"));
   if(started){
     //GPRS attach, put in order APN, username and password.
     //If no needed auth let them blank.
     if (inet.attachGPRS("internet.wind", "", ""))
-      Serial.println("status=ATTACHED");
-    else Serial.println("status=ERROR");
+      Serial.println(F("status=ATTACHED"));
+    else Serial.println(F("status=ERROR"));
     delay(1000);
     
     //Read IP address.
-    gsm.SimpleWriteln("AT+CIFSR");
+    gsm.SimpleWriteln(F("AT+CIFSR"));
     delay(5000);
     //Read until serial buffer is empty.
     gsm.WhileSimpleRead();
@@ -53,9 +53,9 @@ void setup()
     //save the reply.
     numdata=inet.httpGET("www.google.com", 80, "/", msg, 50);
     //Print the results.
-    Serial.println("\nNumber of data received:");
+    Serial.println(F("\nNumber of data received:"));
     Serial.println(numdata);  
-    Serial.println("\nData received:"); 
+    Serial.println(F("\nData received:")); 
     Serial.println(msg); 
   }
 };
@@ -80,15 +80,15 @@ void serialhwread(){
     
     inSerial[i]='\0';
     if(!strcmp(inSerial,"/END")){
-      Serial.println("_");
+      Serial.println(F("_"));
       inSerial[0]=0x1a;
       inSerial[1]='\0';
       gsm.SimpleWriteln(inSerial);
     }
     //Send a saved AT command using serial port.
     if(!strcmp(inSerial,"TEST")){
-      Serial.println("SIGNAL QUALITY");
-      gsm.SimpleWriteln("AT+CSQ");
+      Serial.println(F("SIGNAL QUALITY"));
+      gsm.SimpleWriteln(F("AT+CSQ"));
     }
     //Read last message saved.
     if(!strcmp(inSerial,"MSG")){
