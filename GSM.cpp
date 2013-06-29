@@ -108,7 +108,7 @@ int GSM::begin(long baud_rate){
 			  
 			case 7:
 			  _cell.begin(115200);
-			  _cell.print(F("AT+IPR=9600\r"));
+			  _cell.write_P(F("AT+IPR=9600\r"));
 			  _cell.begin(9600);
 			  delay(500);
 			  break;
@@ -131,9 +131,9 @@ int GSM::begin(long baud_rate){
 				#ifdef DEBUG_ON
 					Serial.println(F("DB:FOUND PREV BR"));
 				#endif
-				_cell.print(F("AT+IPR="));
+				_cell.write_P(F("AT+IPR="));
 				_cell.print(baud_rate);    
-				_cell.print(F("\r")); // send <CR>
+				_cell.write_P(F("\r")); // send <CR>
 				delay(500);
 				_cell.begin(baud_rate);
 				delay(100);
@@ -170,9 +170,9 @@ int GSM::begin(long baud_rate){
 		//just to try to fix some problems with 115200 baudrate
 		_cell.begin(115200);
 		delay(1000);
-		_cell.print(F("AT+IPR="));
+		_cell.write_P(F("AT+IPR="));
 		_cell.print(baud_rate);    
-		_cell.print(F("\r")); // send <CR>		
+		_cell.write_P(F("\r")); // send <CR>		
 		return(0);
 	}
 }
@@ -554,9 +554,9 @@ void GSM::Echo(byte state)
 	{
 	  SetCommLineStatus(CLS_ATCMD);
 
-	  _cell.print(F("ATE"));
+	  _cell.write_P(F("ATE"));
 	  _cell.print((int)state);    
-	  _cell.print(F("\r"));
+	  _cell.write_P(F("\r"));
 	  delay(500);
 	  SetCommLineStatus(CLS_FREE);
 	}

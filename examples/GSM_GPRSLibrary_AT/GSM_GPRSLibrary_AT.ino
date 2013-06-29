@@ -44,7 +44,7 @@ void setup()
     delay(1000);
     
     //Read IP address.
-    gsm.SimpleWriteln(F("AT+CIFSR"));
+    gsm.SimpleWriteln_P(F("AT+CIFSR"));
     delay(5000);
     //Read until serial buffer is empty.
     gsm.WhileSimpleRead();
@@ -88,7 +88,7 @@ void serialhwread(){
     //Send a saved AT command using serial port.
     if(!strcmp(inSerial,"TEST")){
       Serial.println(F("SIGNAL QUALITY"));
-      gsm.SimpleWriteln(F("AT+CSQ"));
+      gsm.SimpleWriteln_P(F("AT+CSQ"));
     }
     //Read last message saved.
     if(!strcmp(inSerial,"MSG")){
