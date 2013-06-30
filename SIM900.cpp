@@ -18,7 +18,7 @@ char SIMCOM900::forceON(){
 	
 	SimpleWriteln_P(F("AT+CREG?"));
 	WaitResp(5000, 100, "OK");
-	if(IsStringReceived("OK")){
+	if(IsStringReceived_P(F("OK"))){
 		ret_val=1;
 	}
 	//BCL
@@ -410,8 +410,8 @@ byte GSM::CheckRegistration(void)
   if (status == RX_FINISHED) {
     // something was received but what was received?
     // ---------------------------------------------
-    if(IsStringReceived("+CREG: 0,1") 
-      || IsStringReceived("+CREG: 0,5")) {
+    if(IsStringReceived_P(F("+CREG: 0,1")) 
+      || IsStringReceived_P(F("+CREG: 0,5"))) {
       // it means module is registered
       // ----------------------------
       module_status |= STATUS_REGISTERED;
@@ -485,7 +485,7 @@ char GSM::SetSpeakerVolume(byte speaker_volume)
     ret_val = -2; // ERROR
   }
   else {
-    if(IsStringReceived("OK")) {
+    if(IsStringReceived_P(F("OK"))) {
       last_speaker_volume = speaker_volume;
       ret_val = last_speaker_volume; // OK
     }
@@ -591,7 +591,7 @@ char GSM::SendDTMFSignal(byte dtmf_tone)
     ret_val = -2; // ERROR
   }
   else {
-    if(IsStringReceived("OK")) {
+    if(IsStringReceived_P(F("OK"))) {
       ret_val = dtmf_tone; // OK
     }
     else ret_val = -3; // ERROR

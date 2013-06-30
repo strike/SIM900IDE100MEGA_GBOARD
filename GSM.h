@@ -198,6 +198,7 @@ class GSM
     void RxInit(uint16_t start_comm_tmout, uint16_t max_interchar_tmout);
     byte IsRxFinished(void);
     byte IsStringReceived(char const *compare_string);
+    byte IsStringReceived_P(const __FlashStringHelper *compare_string);
     byte WaitResp(uint16_t start_comm_tmout, uint16_t max_interchar_tmout);
     byte WaitResp(uint16_t start_comm_tmout, uint16_t max_interchar_tmout, 
     char const *expected_resp_string);

@@ -535,6 +535,50 @@ byte GSM::IsStringReceived(char const *compare_string)
   return (ret_val);
 }
 
+byte GSM::IsStringReceived_P(const __FlashStringHelper *compare_string)
+{
+  char *ch;
+  byte ret_val = 0;
+
+  if(comm_buf_len) {
+  /*
+		#ifdef DEBUG_GSMRX
+			DebugPrint("DEBUG: Compare the string: \r\n", 0);
+			for (int i=0; i<comm_buf_len; i++){
+				Serial.print(byte(comm_buf[i]));	
+			}
+			
+			DebugPrint("\r\nDEBUG: with the string: \r\n", 0);
+			Serial.print(compare_string);	
+			DebugPrint("\r\n", 0);
+		#endif
+	*/
+	#ifdef DEBUG_ON
+		Serial.println(F("ATT: "));
+		Serial.print(compare_string);
+		Serial.print(F("RIC: "));
+		Serial.println((char *)comm_buf);
+	#endif
+
+    ch = strstr_P((char *)comm_buf, (PGM_P)compare_string);
+    if (ch != NULL) {
+      ret_val = 1;
+	  /*#ifdef DEBUG_PRINT
+		DebugPrint("\r\nDEBUG: expected string was received\r\n", 0);
+	  #endif
+	  */
+    }
+	else
+	{
+	  /*#ifdef DEBUG_PRINT
+		DebugPrint("\r\nDEBUG: expected string was NOT received\r\n", 0);
+	  #endif
+	  */
+	}
+  }
+
+  return (ret_val);
+}
 
 void GSM::RxInit(uint16_t start_comm_tmout, uint16_t max_interchar_tmout)
 {
