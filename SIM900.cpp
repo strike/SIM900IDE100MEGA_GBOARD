@@ -52,6 +52,10 @@ void SIMCOM900::on(){
   pinMode(GSM_ON, OUTPUT);
 
   digitalWrite(GSM_ON, LOW);
+  delay(300);
+  digitalWrite(GSM_ON, HIGH);
+  delay(1200);
+  digitalWrite(GSM_ON, LOW);
 }
 
 int SIMCOM900::configandwait(char* pin)
