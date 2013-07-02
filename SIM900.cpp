@@ -30,6 +30,7 @@ char SIMCOM900::forceON(){
           *p_char = 0; 
     }
 
+  pinMode(GSM_ON, OUTPUT);
 	if((*p_char1)=='4'){
 		digitalWrite(GSM_ON, HIGH);
 		delay(1200);
@@ -39,6 +40,18 @@ char SIMCOM900::forceON(){
 	}
 
 	return ret_val;
+}
+
+void SIMCOM900::off(){
+  pinMode(GSM_ON, OUTPUT);
+
+  digitalWrite(GSM_ON, HIGH);
+}
+
+void SIMCOM900::on(){
+  pinMode(GSM_ON, OUTPUT);
+
+  digitalWrite(GSM_ON, LOW);
 }
 
 int SIMCOM900::configandwait(char* pin)

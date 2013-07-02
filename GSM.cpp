@@ -48,8 +48,8 @@ int GSM::begin(long baud_rate){
 	_cell.begin(baud_rate);
 	setStatus(IDLE); 
 
-	    pinMode(GSM_ON, OUTPUT);               
-    pinMode(GSM_RESET, OUTPUT);
+	pinMode(GSM_ON, OUTPUT);               
+  pinMode(GSM_RESET, OUTPUT);
 	for (cont=0; cont<3; cont++){
 		if (AT_RESP_ERR_NO_RESP == SendATCmdWaitResp("AT", 500, 100, "OK", 5)&&!turnedON) {		//check power
 	    // there is no response => turn on the module
