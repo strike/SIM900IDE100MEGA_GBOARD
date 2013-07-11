@@ -58,6 +58,16 @@ void SIMCOM900::on(){
   digitalWrite(GSM_ON, LOW);
 }
 
+void SIMCOM900::reset(){
+  pinMode(GSM_RESET, OUTPUT); 
+  digitalWrite(GSM_RESET, HIGH);
+  delay(100);
+  digitalWrite(GSM_RESET, LOW);
+  delay(100);
+}
+
+
+
 int SIMCOM900::configandwait(char* pin)
 {
   int connCode;
