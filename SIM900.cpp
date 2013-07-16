@@ -921,15 +921,31 @@ char GSM::ComparePhoneNumber(byte position, char *phone_number)
   return (ret_val);
 }
 
-//-----------------------------------------------------r
 
 
+/**********************************************************
+Function return local time from GSM
+
+timeString return template:
+        "yy/MM/dd,hh:mm:ss±zz"
+
+return: 
+        ERROR ret. val:
+        ---------------
+        -1 - comm. line to the GSM module is not free
+        -2 - GSM module didn't answer in timeout
+
+        OK ret val: 0 
+
+**********************************************************/
 char GSM::getLocalTime(char *timeString)
 {
   char ret_val = -1;
   char *p_char;
   byte status;
 
+  if (CLS_FREE != gsm.GetCommLineStatus()) return (ret_val);
+  gsm.SetCommLineStatus(CLS_ATCMD);
 
   gsm.SimpleWriteln_P(F("AT+CCLK?"));
   RxInit(5000, 1500); 
@@ -968,6 +984,6 @@ char GSM::getLocalTime(char *timeString)
       break;
   }
 
+  gsm.SetCommLineStatus(CLS_FREE);
   return ret_val;
-
 }
