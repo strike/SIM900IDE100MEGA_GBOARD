@@ -921,4 +921,53 @@ char GSM::ComparePhoneNumber(byte position, char *phone_number)
   return (ret_val);
 }
 
-//-----------------------------------------------------
+//-----------------------------------------------------r
+
+
+char GSM::getLocalTime(char *timeString)
+{
+  char ret_val = -1;
+  char *p_char;
+  byte status;
+
+
+  gsm.SimpleWriteln_P(F("AT+CCLK?"));
+  RxInit(5000, 1500); 
+  // wait response is finished
+  do {
+    if (IsStringReceived_P(F("OK"))) { 
+      status = RX_FINISHED;
+      break; // so finish receiving immediately and let's go to 
+             // to check response 
+    }
+    status = IsRxFinished();
+  } while (status == RX_NOT_FINISHED);
+
+  switch (status) {
+    case RX_TMOUT_ERR:
+      // response was not received in specific time
+      ret_val = -2;
+      break;
+
+    case RX_FINISHED:
+      // something was received but what was received?
+      // ---------------------------------------------
+      if(IsStringReceived_P(F("+CCLK:"))) { 
+
+        for (int i = 0; i < 20; i++){
+        // strcpy(timeString, (char *)gsm.comm_buf);
+          timeString[i] = ((char *)gsm.comm_buf)[i+10];
+        }
+        timeString[20] = '\0';
+        ret_val = 0;
+      }
+
+      // here we have gsm.WaitResp() just for generation tmout 20msec. in case OK was detected
+      // not due to receiving
+      WaitResp(20, 20); 
+      break;
+  }
+
+  return ret_val;
+
+}

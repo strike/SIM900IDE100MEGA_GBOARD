@@ -230,6 +230,9 @@ class GSM
 	char DelPhoneNumber(byte position);
 	char ComparePhoneNumber(byte position, char *phone_number);
 
+  // Get local time
+  char getLocalTime(char *timeString);
+
 	// returns registration state
 	byte IsRegistered(void);
 	// returns whether complete initialization was made

@@ -212,6 +212,11 @@ void GSM::InitParam(byte group){
 		SendATCmdWaitResp(F("AT+CLIP=1"), 500, 50, "OK", 5);
 		// Mobile Equipment Error Code
 		SendATCmdWaitResp(F("AT+CMEE=0"), 500, 50, "OK", 5);
+		// Local tomestamp enabled
+		SendATCmdWaitResp(F("AT+CLTS=1"), 500, 50, "OK", 5);
+
+		SendATCmdWaitResp(F("AT+CENG=3"), 500, 50, "OK", 5);
+
 		// Echo canceller enabled 
 		//SendATCmdWaitResp(F("AT#SHFEC=1"), 500, 50, "OK", 5);
 		// Ringer tone select (0 to 32)
