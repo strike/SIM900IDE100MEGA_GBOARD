@@ -926,7 +926,7 @@ char GSM::ComparePhoneNumber(byte position, char *phone_number)
 /**********************************************************
 Function return local time from GSM
 
-timeString return template:
+timeString return template (21 symbl):
         "yy/MM/dd,hh:mm:ss±zz"
 
 return: 
@@ -968,11 +968,12 @@ char GSM::getLocalTime(char *timeString)
     case RX_FINISHED:
       // something was received but what was received?
       // ---------------------------------------------
-      if(IsStringReceived_P(F("+CCLK:"))) { 
-
+      char *ch;
+      if(ch = IsStringReceived_P(F("+CCLK:"))) { 
+        ch += strlen_P(PSTR("+CCLK: \""));
         for (int i = 0; i < 20; i++){
         // strcpy(timeString, (char *)gsm.comm_buf);
-          timeString[i] = ((char *)gsm.comm_buf)[i+10];
+          timeString[i] = ch[i];
         }
         timeString[20] = '\0';
         ret_val = 0;

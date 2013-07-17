@@ -496,10 +496,10 @@ compare_string - pointer to the string which should be find
 return: 0 - string was NOT received
         1 - string was received
 **********************************************************/
-byte GSM::IsStringReceived(char const *compare_string)
+char* GSM::IsStringReceived(char const *compare_string)
 {
   char *ch;
-  byte ret_val = 0;
+  char *ret_val = NULL;
 
   if(comm_buf_len) {
   /*
@@ -522,7 +522,7 @@ byte GSM::IsStringReceived(char const *compare_string)
 	#endif
     ch = strstr((char *)comm_buf, compare_string);
     if (ch != NULL) {
-      ret_val = 1;
+      ret_val = ch;
 	  /*#ifdef DEBUG_PRINT
 		DebugPrint("\r\nDEBUG: expected string was received\r\n", 0);
 	  #endif
@@ -540,10 +540,10 @@ byte GSM::IsStringReceived(char const *compare_string)
   return (ret_val);
 }
 
-byte GSM::IsStringReceived_P(const __FlashStringHelper *compare_string)
+char* GSM::IsStringReceived_P(const __FlashStringHelper *compare_string)
 {
   char *ch;
-  byte ret_val = 0;
+  char *ret_val = NULL;
 
   if(comm_buf_len) {
   /*
@@ -567,7 +567,8 @@ byte GSM::IsStringReceived_P(const __FlashStringHelper *compare_string)
 
     ch = strstr_P((char *)comm_buf, (PGM_P)compare_string);
     if (ch != NULL) {
-      ret_val = 1;
+      ret_val = ch;
+
 	  /*#ifdef DEBUG_PRINT
 		DebugPrint("\r\nDEBUG: expected string was received\r\n", 0);
 	  #endif
