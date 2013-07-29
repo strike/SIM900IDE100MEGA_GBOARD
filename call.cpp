@@ -245,10 +245,17 @@ return:
 **********************************************************/
 void CallGSM::HangUp(void)
 {
-  //if (CLS_FREE != gsm.GetCommLineStatus()) return;
+  if (CLS_FREE != gsm.GetCommLineStatus()){
+    delay(200);
+  }
+
+  if (CLS_FREE != gsm.GetCommLineStatus()){
+    return;
+  }
   gsm.SetCommLineStatus(CLS_ATCMD);
   gsm.SimpleWriteln_P(F("ATH"));
   gsm.SetCommLineStatus(CLS_FREE);
+  delay(300);
 }
 
 /**********************************************************
