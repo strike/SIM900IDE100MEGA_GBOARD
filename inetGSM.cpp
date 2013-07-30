@@ -3,7 +3,7 @@
 #define _TCP_CONNECTION_TOUT_ 20
 #define _GSM_DATA_TOUT_ 10
 
-int InetGSM::httpGET(const char* server, int port, const char* path, char* result, int resultlength)
+int InetGSM::httpGET(const char* server, int port, const char* path, char* result, int resultlength, char* useragent)
 {
   boolean connected=false;
   int n_of_at=0;
@@ -37,7 +37,12 @@ int InetGSM::httpGET(const char* server, int port, const char* path, char* resul
   gsm.SimpleWrite_P(F(" HTTP/1.0\nHost: "));
   gsm.SimpleWrite(server);
   gsm.SimpleWrite_P(F("\n"));
-  gsm.SimpleWrite_P(F("User-Agent: Arduino"));
+  gsm.SimpleWrite_P(F("User-Agent: "));
+  if (useragent){
+    gsm.SimpleWrite(useragent);
+  } else {
+    gsm.SimpleWrite_P(F("Arduino"));
+  }
   gsm.SimpleWrite_P(F("\n\n"));
   gsm.SimpleWrite(end_c);
 
@@ -176,7 +181,6 @@ int InetGSM::attachGPRS(char* domain, char* dom1, char* dom2)
   //gsm._tf.setTimeout(_GSM_DATA_TOUT_);	//Timeout for expecting modem responses.
   gsm.WaitResp(50, 50);
   gsm.SimpleWriteln_P(F("AT+CIFSR"));
-  Serial.println(F("TEST"));
   if(gsm.WaitResp(5000, 50, "ERROR")!=RX_FINISHED_STR_RECV){
   	#ifdef DEBUG_ON
 		Serial.println(F("DB:ALREADY HAVE AN IP"));
