@@ -16,7 +16,7 @@ byte CallGSM::CallStatus(void)
 
   if (CLS_FREE != gsm.GetCommLineStatus()) return (CALL_COMM_LINE_BUSY);
   gsm.SetCommLineStatus(CLS_ATCMD);
-  gsm.SimpleWriteln_P(F("AT+CPAS"));
+  gsm.SimpleWriteln(F("AT+CPAS"));
 
   // 5 sec. for initial comm tmout
   // 50 msec. for inter character timeout
@@ -101,7 +101,7 @@ byte CallGSM::CallStatusWithAuth(char *phone_number,
   phone_number[0] = 0x00;  // no phonr number so far
   if (CLS_FREE != gsm.GetCommLineStatus()) return (CALL_COMM_LINE_BUSY);
   gsm.SetCommLineStatus(CLS_ATCMD);
-  gsm.SimpleWriteln_P(F("AT+CLCC"));
+  gsm.SimpleWriteln(F("AT+CLCC"));
 
   // 5 sec. for initial comm tmout
   // and max. 1500 msec. for inter character timeout
@@ -234,7 +234,7 @@ void CallGSM::PickUp(void)
 {
   if (CLS_FREE != gsm.GetCommLineStatus()) return;
   gsm.SetCommLineStatus(CLS_ATCMD);
-  gsm.SimpleWriteln_P(F("ATA"));
+  gsm.SimpleWriteln(F("ATA"));
   gsm.SetCommLineStatus(CLS_FREE);
 }
 
@@ -253,7 +253,7 @@ void CallGSM::HangUp(void)
     return;
   }
   gsm.SetCommLineStatus(CLS_ATCMD);
-  gsm.SimpleWriteln_P(F("ATH"));
+  gsm.SimpleWriteln(F("ATH"));
   gsm.SetCommLineStatus(CLS_FREE);
   delay(300);
 }
@@ -270,9 +270,9 @@ void CallGSM::Call(char *number_string)
   if (CLS_FREE != gsm.GetCommLineStatus()) return;
   gsm.SetCommLineStatus(CLS_ATCMD);
   // ATDxxxxxx;<CR>
-  gsm.SimpleWrite_P(F("ATD"));
+  gsm.SimpleWrite(F("ATD"));
   gsm.SimpleWrite(number_string);    
-  gsm.SimpleWriteln_P(F(";"));
+  gsm.SimpleWriteln(F(";"));
   // 10 sec. for initial comm tmout
   // 50 msec. for inter character timeout
   gsm.WaitResp(10000, 50);
@@ -290,9 +290,9 @@ void CallGSM::Call(int sim_position)
   if (CLS_FREE != gsm.GetCommLineStatus()) return;
   gsm.SetCommLineStatus(CLS_ATCMD);
   // ATD>"SM" 1;<CR>
-  gsm.SimpleWrite_P(F("ATD>\"SM\" "));
+  gsm.SimpleWrite(F("ATD>\"SM\" "));
   gsm.SimpleWrite(sim_position);
-  gsm.SimpleWriteln_P(F(";"));
+  gsm.SimpleWriteln(F(";"));
 
   // 10 sec. for initial comm tmout
   // 50 msec. for inter character timeout

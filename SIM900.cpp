@@ -16,7 +16,7 @@ char SIMCOM900::forceON(){
 	char *p_char; 
 	char *p_char1;
 	
-	SimpleWriteln_P(F("AT+CREG?"));
+	SimpleWriteln(F("AT+CREG?"));
 	WaitResp(5000, 100, "OK");
 	if(IsStringReceived_P(F("OK"))){
 		ret_val=1;
@@ -81,7 +81,7 @@ int SIMCOM900::configandwait(char* pin)
   for(int i=0; i<10; i++)
   {  	
     //Ask for register status to GPRS network.
-    SimpleWriteln_P(F("AT+CGREG?")); 
+    SimpleWriteln(F("AT+CGREG?")); 
 	
     //Se espera la unsolicited response de registered to network.
     while(gsm.WaitResp(5000, 50, "+CGREG: 0,")!=RX_FINISHED_STR_RECV)
@@ -93,10 +93,10 @@ int SIMCOM900::configandwait(char* pin)
 		{
 		  setStatus(READY);
 		  
-		SimpleWriteln_P(F("AT+CMGF=1")); //SMS text mode.
+		SimpleWriteln(F("AT+CMGF=1")); //SMS text mode.
 		delay(200);
 		  // Buah, we should take this to readCall()
-		SimpleWriteln_P(F("AT+CLIP=1")); //SMS text mode.
+		SimpleWriteln(F("AT+CLIP=1")); //SMS text mode.
 		delay(200);
 		//_cell << "AT+QIDEACT" <<  _DEC(cr) << endl; //To make sure not pending connection.
 		//delay(1000);
@@ -137,8 +137,8 @@ int SIMCOM900::read(char* result, int resultlength)
     
    //_tf.setTimeout(_GSM_DATA_TOUT_);
    //_cell.flush();
-  SimpleWriteln_P(F("AT+QENG=1,0")); 
-  SimpleWriteln_P(F("AT+QENG?")); 
+  SimpleWriteln(F("AT+QENG=1,0")); 
+  SimpleWriteln(F("AT+QENG?")); 
   if(gsm.WaitResp(5000, 50, "+QENG")!=RX_FINISHED_STR_NOT_RECV)
     return 0;
 
@@ -154,7 +154,7 @@ int SIMCOM900::read(char* result, int resultlength)
   cellid=_cell.read();
   
   gsm.WaitResp(5000, 50, "+OK");
-  SimpleWriteln_P(F("AT+QENG=1,0")); 
+  SimpleWriteln(F("AT+QENG=1,0")); 
   gsm.WaitResp(5000, 50, "+OK");
   return 1;
 }
@@ -168,7 +168,7 @@ boolean SIMCOM900::readSMS(char* msg, int msglength, char* number, int nlength)
   */
   //_tf.setTimeout(_GSM_DATA_TOUT_);
   //_cell.flush();
-  SimpleWriteln_P(F("AT+CMGL=\"REC UNREAD\",1"));
+  SimpleWriteln(F("AT+CMGL=\"REC UNREAD\",1"));
   if(gsm.WaitResp(5000, 50, "+CMGL")!=RX_FINISHED_STR_RECV)
   //if(_tf.find("+CMGL: "))
   {
@@ -179,7 +179,7 @@ boolean SIMCOM900::readSMS(char* msg, int msglength, char* number, int nlength)
 
 	_tf.getString("\n", "\nOK", msg, msglength);
 
-  SimpleWrite_P(F("AT+CMGD="));
+  SimpleWrite(F("AT+CMGD="));
 	SimpleWriteln(index);
     gsm.WaitResp(5000, 50, "OK"); 
     return true;
@@ -201,7 +201,7 @@ boolean SIMCOM900::readCall(char* number, int nlength)
 
 	_tf.getString("", "\"", number, nlength);
 
-    SimpleWriteln_P(F("ATH"));
+    SimpleWriteln(F("ATH"));
     delay(1000);
     //_cell.flush();
     return true;
@@ -216,11 +216,11 @@ boolean SIMCOM900::call(char* number, unsigned int milliseconds)
   
   //_tf.setTimeout(_GSM_DATA_TOUT_);
 
-  SimpleWrite_P(F("ATD"));
+  SimpleWrite(F("ATD"));
   SimpleWrite(number);
-  SimpleWriteln_P(F(";"));
+  SimpleWriteln(F(";"));
   delay(milliseconds);
-  SimpleWriteln_P(F("ATH"));
+  SimpleWriteln(F("ATH"));
 
   return true;
  
@@ -237,7 +237,7 @@ int SIMCOM900::setPIN(char *pin)
   //_cell.flush();
 
   //AT command to set PIN.
-  SimpleWrite_P(F("AT+CPIN="));
+  SimpleWrite(F("AT+CPIN="));
   SimpleWriteln(pin);
 
   //Expect "OK".
@@ -257,7 +257,7 @@ int SIMCOM900::changeNSIPmode(char mode)
 
     //_cell.flush();
 
-    SimpleWrite_P(F("AT+QIDNSIP="));
+    SimpleWrite(F("AT+QIDNSIP="));
 	SimpleWriteln(mode);
 	if(gsm.WaitResp(5000, 50, "OK")!=RX_FINISHED_STR_NOT_RECV) return 0;
     //if(!_tf.find("OK")) return 0;
@@ -276,7 +276,7 @@ int SIMCOM900::getCCI(char *cci)
   //_cell.flush();
 
   //AT command to get CCID.
-  SimpleWriteln_P(F("AT+QCCID"));
+  SimpleWriteln(F("AT+QCCID"));
   
   //Read response from modem
 	_tf.getString("AT+QCCID\r\r\r\n","\r\n",cci, 21);
@@ -297,7 +297,7 @@ int SIMCOM900::getIMEI(char *imei)
   //_cell.flush();
 
   //AT command to get IMEI.
-  SimpleWriteln_P(F("AT+GSN"));
+  SimpleWriteln(F("AT+GSN"));
   
   //Read response from modem
 	_tf.getString("\r\n","\r\n",imei, 16);
@@ -326,19 +326,23 @@ void SIMCOM900::SimpleRead()
 	}
 }
 
+void SIMCOM900::SimpleWrite(const __FlashStringHelper *comm)
+{
+  Serial.print(F("!"));
+  Serial.println(comm);
+  _cell.write_P(comm);
+}
+
 void SIMCOM900::SimpleWrite(char *comm)
 {
-	_cell.print(comm);
+   Serial.println(":(");
+  _cell.print(comm);
 }
 
 void SIMCOM900::SimpleWrite(const char *comm)
 {
-	_cell.print(comm);
-}
-
-void SIMCOM900::SimpleWrite_P(const __FlashStringHelper *comm)
-{
-  _cell.write_P(comm);
+   Serial.println(":(");
+  _cell.print(comm);
 }
 
 void SIMCOM900::SimpleWrite(int comm)
@@ -346,19 +350,19 @@ void SIMCOM900::SimpleWrite(int comm)
 	_cell.print(comm);
 }
 
+void SIMCOM900::SimpleWriteln(const __FlashStringHelper *comm)
+{
+  _cell.writeln_P(comm);
+}
+
 void SIMCOM900::SimpleWriteln(char *comm)
 {
-	_cell.println(comm);
+  _cell.println(comm);
 }
 
 void SIMCOM900::SimpleWriteln(char const *comm)
 {
-	_cell.println(comm);
-}
-
-void SIMCOM900::SimpleWriteln_P(const __FlashStringHelper *comm)
-{
-  _cell.writeln_P(comm);
+  _cell.println(comm);
 }
 
 void SIMCOM900::SimpleWriteln(int comm)
@@ -949,7 +953,7 @@ char GSM::getLocalTime(char *timeString)
   if (CLS_FREE != gsm.GetCommLineStatus()) return (ret_val);
   gsm.SetCommLineStatus(CLS_ATCMD);
 
-  gsm.SimpleWriteln_P(F("AT+CCLK?"));
+  gsm.SimpleWriteln(F("AT+CCLK?"));
   RxInit(5000, 1500); 
   // wait response is finished
   do {

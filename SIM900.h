@@ -29,13 +29,13 @@ class SIMCOM900 : public virtual GSM
     int readCellData(int &mcc, int &mnc, long &lac, long &cellid);
     void SimpleRead();
     void WhileSimpleRead();
+    void SimpleWrite(const __FlashStringHelper *comm);
     void SimpleWrite(char *comm);
     void SimpleWrite(char const *comm);
-    void SimpleWrite_P(const __FlashStringHelper *comm);
     void SimpleWrite(int comm);
+    void SimpleWriteln(const __FlashStringHelper *comm);
     void SimpleWriteln(char *comm);
     void SimpleWriteln(char const *comm);
-    void SimpleWriteln_P(const __FlashStringHelper *comm);
     void SimpleWriteln(int comm);
 };
 
