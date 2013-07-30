@@ -18,7 +18,7 @@ char SIMCOM900::forceON(){
 	
 	SimpleWriteln(F("AT+CREG?"));
 	WaitResp(5000, 100, "OK");
-	if(IsStringReceived_P(F("OK"))){
+	if(IsStringReceived(F("OK"))){
 		ret_val=1;
 	}
 	//BCL
@@ -328,20 +328,16 @@ void SIMCOM900::SimpleRead()
 
 void SIMCOM900::SimpleWrite(const __FlashStringHelper *comm)
 {
-  Serial.print(F("!"));
-  Serial.println(comm);
   _cell.write_P(comm);
 }
 
 void SIMCOM900::SimpleWrite(char *comm)
 {
-   Serial.println(":(");
   _cell.print(comm);
 }
 
 void SIMCOM900::SimpleWrite(const char *comm)
 {
-   Serial.println(":(");
   _cell.print(comm);
 }
 
@@ -443,8 +439,8 @@ byte GSM::CheckRegistration(void)
   if (status == RX_FINISHED) {
     // something was received but what was received?
     // ---------------------------------------------
-    if(IsStringReceived_P(F("+CREG: 0,1")) 
-      || IsStringReceived_P(F("+CREG: 0,5"))) {
+    if(IsStringReceived(F("+CREG: 0,1")) 
+      || IsStringReceived(F("+CREG: 0,5"))) {
       // it means module is registered
       // ----------------------------
       module_status |= STATUS_REGISTERED;
@@ -518,7 +514,7 @@ char GSM::SetSpeakerVolume(byte speaker_volume)
     ret_val = -2; // ERROR
   }
   else {
-    if(IsStringReceived_P(F("OK"))) {
+    if(IsStringReceived(F("OK"))) {
       last_speaker_volume = speaker_volume;
       ret_val = last_speaker_volume; // OK
     }
@@ -624,7 +620,7 @@ char GSM::SendDTMFSignal(byte dtmf_tone)
     ret_val = -2; // ERROR
   }
   else {
-    if(IsStringReceived_P(F("OK"))) {
+    if(IsStringReceived(F("OK"))) {
       ret_val = dtmf_tone; // OK
     }
     else ret_val = -3; // ERROR
@@ -957,7 +953,7 @@ char GSM::getLocalTime(char *timeString)
   RxInit(5000, 1500); 
   // wait response is finished
   do {
-    if (IsStringReceived_P(F("OK"))) { 
+    if (IsStringReceived(F("OK"))) { 
       status = RX_FINISHED;
       break; // so finish receiving immediately and let's go to 
              // to check response 
@@ -975,7 +971,7 @@ char GSM::getLocalTime(char *timeString)
       // something was received but what was received?
       // ---------------------------------------------
       char *ch;
-      if(ch = IsStringReceived_P(F("+CCLK:"))) { 
+      if(ch = IsStringReceived(F("+CCLK:"))) { 
         ch += strlen_P(PSTR("+CCLK: \""));
         for (int i = 0; i < 20; i++){
         // strcpy(timeString, (char *)gsm.comm_buf);

@@ -38,17 +38,17 @@ byte CallGSM::CallStatus(void)
     // <CR><LF>+CPAS: 3<CR><LF> <CR><LF>OK<CR><LF> - NO CALL
     // call in progress
     // <CR><LF>+CPAS: 4<CR><LF> <CR><LF>OK<CR><LF> - NO CALL
-    if(gsm.IsStringReceived_P(F("0"))) { 
+    if(gsm.IsStringReceived(F("0"))) { 
       // ready - there is no call
       // ------------------------
       ret_val = CALL_NONE;
     }
-    else if(gsm.IsStringReceived_P(F("3"))) { 
+    else if(gsm.IsStringReceived(F("3"))) { 
       // incoming call
       // --------------
       ret_val = CALL_INCOM_VOICE;
     }
-    else if(gsm.IsStringReceived_P(F("4"))) { 
+    else if(gsm.IsStringReceived(F("4"))) { 
       // active call
       // -----------
       ret_val = CALL_ACTIVE_VOICE;
@@ -108,7 +108,7 @@ byte CallGSM::CallStatusWithAuth(char *phone_number,
   gsm.RxInit(5000, 1500); 
   // wait response is finished
   do {
-    if (gsm.IsStringReceived_P(F("OK\r\n"))) { 
+    if (gsm.IsStringReceived(F("OK\r\n"))) { 
       // perfect - we have some response, but what:
 
       // there is either NO call:
@@ -131,44 +131,44 @@ byte CallGSM::CallStatusWithAuth(char *phone_number,
     // something was received but what was received?
     // example: //+CLCC: 1,1,4,0,0,"+420XXXXXXXXX",145
     // ---------------------------------------------
-    if(gsm.IsStringReceived_P(F("+CLCC: 1,1,4,0,0"))) { 
+    if(gsm.IsStringReceived(F("+CLCC: 1,1,4,0,0"))) { 
       // incoming VOICE call - not authorized so far
       // -------------------------------------------
       search_phone_num = 1;
       ret_val = CALL_INCOM_VOICE_NOT_AUTH;
     }
-    else if(gsm.IsStringReceived_P(F("+CLCC: 1,1,4,1,0"))) { 
+    else if(gsm.IsStringReceived(F("+CLCC: 1,1,4,1,0"))) { 
       // incoming DATA call - not authorized so far
       // ------------------------------------------
       search_phone_num = 1;
       ret_val = CALL_INCOM_DATA_NOT_AUTH;
     }
-    else if(gsm.IsStringReceived_P(F("+CLCC: 1,0,0,0,0"))) { 
+    else if(gsm.IsStringReceived(F("+CLCC: 1,0,0,0,0"))) { 
       // active VOICE call - GSM is caller
       // ----------------------------------
       search_phone_num = 1;
       ret_val = CALL_ACTIVE_VOICE;
     }
-    else if(gsm.IsStringReceived_P(F("+CLCC: 1,1,0,0,0"))) { 
+    else if(gsm.IsStringReceived(F("+CLCC: 1,1,0,0,0"))) { 
       // active VOICE call - GSM is listener
       // -----------------------------------
       search_phone_num = 1;
       ret_val = CALL_ACTIVE_VOICE;
     }
-    else if(gsm.IsStringReceived_P(F("+CLCC: 1,1,0,1,0"))) { 
+    else if(gsm.IsStringReceived(F("+CLCC: 1,1,0,1,0"))) { 
       // active DATA call - GSM is listener
       // ----------------------------------
       search_phone_num = 1;
       ret_val = CALL_ACTIVE_DATA;
     }
-    else if(gsm.IsStringReceived_P(F("+CLCC:"))){ 
+    else if(gsm.IsStringReceived(F("+CLCC:"))){ 
       // other string is not important for us - e.g. GSM module activate call
       // etc.
       // IMPORTANT - each +CLCC:xx response has also at the end
       // string <CR><LF>OK<CR><LF>
       ret_val = CALL_OTHERS;
     }
-    else if(gsm.IsStringReceived_P(F("OK"))){ 
+    else if(gsm.IsStringReceived(F("OK"))){ 
       // only "OK" => there is NO call activity
       // --------------------------------------
       ret_val = CALL_NONE;

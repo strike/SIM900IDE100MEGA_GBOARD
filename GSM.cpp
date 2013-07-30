@@ -289,7 +289,7 @@ return:
       AT_RESP_ERR_DIF_RESP = 0,   // response_string is different from the response
       AT_RESP_OK = 1,             // response_string was included in the response
 **********************************************************/
-char GSM::SendATCmdWaitResp(char const *AT_cmd_string,
+char GSM::SendATCmdWaitResp(const __FlashStringHelper *AT_cmd_string,
                 uint16_t start_comm_tmout, uint16_t max_interchar_tmout,
                 char const *response_string,
                 byte no_of_attempts)
@@ -326,7 +326,7 @@ char GSM::SendATCmdWaitResp(char const *AT_cmd_string,
   return (ret_val);
 }
 
-char GSM::SendATCmdWaitResp(const __FlashStringHelper *AT_cmd_string,
+char GSM::SendATCmdWaitResp(char const *AT_cmd_string,
                 uint16_t start_comm_tmout, uint16_t max_interchar_tmout,
                 char const *response_string,
                 byte no_of_attempts)
@@ -496,6 +496,28 @@ compare_string - pointer to the string which should be find
 return: 0 - string was NOT received
         1 - string was received
 **********************************************************/
+char* GSM::IsStringReceived(const __FlashStringHelper *compare_string)
+{
+  char *ch;
+  char *ret_val = NULL;
+
+  if(comm_buf_len) {
+		#ifdef DEBUG_ON
+			Serial.println(F("ATT: "));
+			Serial.print(compare_string);
+			Serial.print(F("RIC: "));
+			Serial.println((char *)comm_buf);
+		#endif
+
+    ch = strstr_P((char *)comm_buf, (PGM_P)compare_string);
+    if (ch != NULL) {
+      ret_val = ch;
+    }
+  }
+
+  return (ret_val);
+}
+
 char* GSM::IsStringReceived(char const *compare_string)
 {
   char *ch;
@@ -523,52 +545,6 @@ char* GSM::IsStringReceived(char const *compare_string)
     ch = strstr((char *)comm_buf, compare_string);
     if (ch != NULL) {
       ret_val = ch;
-	  /*#ifdef DEBUG_PRINT
-		DebugPrint("\r\nDEBUG: expected string was received\r\n", 0);
-	  #endif
-	  */
-    }
-	else
-	{
-	  /*#ifdef DEBUG_PRINT
-		DebugPrint("\r\nDEBUG: expected string was NOT received\r\n", 0);
-	  #endif
-	  */
-	}
-  }
-
-  return (ret_val);
-}
-
-char* GSM::IsStringReceived_P(const __FlashStringHelper *compare_string)
-{
-  char *ch;
-  char *ret_val = NULL;
-
-  if(comm_buf_len) {
-  /*
-		#ifdef DEBUG_GSMRX
-			DebugPrint("DEBUG: Compare the string: \r\n", 0);
-			for (int i=0; i<comm_buf_len; i++){
-				Serial.print(byte(comm_buf[i]));	
-			}
-			
-			DebugPrint("\r\nDEBUG: with the string: \r\n", 0);
-			Serial.print(compare_string);	
-			DebugPrint("\r\n", 0);
-		#endif
-	*/
-	#ifdef DEBUG_ON
-		Serial.println(F("ATT: "));
-		Serial.print(compare_string);
-		Serial.print(F("RIC: "));
-		Serial.println((char *)comm_buf);
-	#endif
-
-    ch = strstr_P((char *)comm_buf, (PGM_P)compare_string);
-    if (ch != NULL) {
-      ret_val = ch;
-
 	  /*#ifdef DEBUG_PRINT
 		DebugPrint("\r\nDEBUG: expected string was received\r\n", 0);
 	  #endif

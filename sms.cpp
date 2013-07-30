@@ -186,7 +186,7 @@ char SMSGSM::IsSMSPresent(byte required_status)
   gsm.RxInit(5000, 1500); 
   // wait response is finished
   do {
-    if (gsm.IsStringReceived_P(F("OK"))) { 
+    if (gsm.IsStringReceived(F("OK"))) { 
       // perfect - we have some response, but what:
 
       // there is either NO SMS:
@@ -214,7 +214,7 @@ char SMSGSM::IsSMSPresent(byte required_status)
     case RX_FINISHED:
       // something was received but what was received?
       // ---------------------------------------------
-      if(gsm.IsStringReceived_P(F("+CMGL:"))) { 
+      if(gsm.IsStringReceived(F("+CMGL:"))) { 
         // there is some SMS with status => get its position
         // response is:
         // +CMGL: <index>,<stat>,<oa/da>,,[,<tooa/toda>,<length>]
@@ -309,12 +309,12 @@ char SMSGSM::GetSMS(byte position, char *phone_number, char *SMS_text, byte max_
 
     case RX_FINISHED_STR_NOT_RECV:
       // OK was received => there is NO SMS stored in this position
-      if(gsm.IsStringReceived_P(F("OK"))) {
+      if(gsm.IsStringReceived(F("OK"))) {
         // there is only response <CR><LF>OK<CR><LF> 
         // => there is NO SMS
         ret_val = GETSMS_NO_SMS;
       }
-      else if(gsm.IsStringReceived_P(F("ERROR"))) {
+      else if(gsm.IsStringReceived(F("ERROR"))) {
         // error should not be here but for sure
         ret_val = GETSMS_NO_SMS;
       }
@@ -326,7 +326,7 @@ char SMSGSM::GetSMS(byte position, char *phone_number, char *SMS_text, byte max_
       //response for new SMS:
       //<CR><LF>+CMGR: "REC UNREAD","+XXXXXXXXXXXX",,"02/03/18,09:54:28+40"<CR><LF>
 		  //There is SMS text<CR><LF>OK<CR><LF>
-      if(gsm.IsStringReceived_P(F("\"REC UNREAD\""))) { 
+      if(gsm.IsStringReceived(F("\"REC UNREAD\""))) { 
         // get phone number of received SMS: parse phone number string 
         // +XXXXXXXXXXXX
         // -------------------------------------------------------
@@ -335,7 +335,7 @@ char SMSGSM::GetSMS(byte position, char *phone_number, char *SMS_text, byte max_
       //response for already read SMS = old SMS:
       //<CR><LF>+CMGR: "REC READ","+XXXXXXXXXXXX",,"02/03/18,09:54:28+40"<CR><LF>
 		  //There is SMS text<CR><LF>
-      else if(gsm.IsStringReceived_P(F("\"REC READ\""))) {
+      else if(gsm.IsStringReceived(F("\"REC READ\""))) {
         // get phone number of received SMS
         // --------------------------------
         ret_val = GETSMS_READ_SMS;
