@@ -46,6 +46,8 @@ void SIMCOM900::off(){
   pinMode(GSM_ON, OUTPUT);
 
   digitalWrite(GSM_ON, HIGH);
+  delay(1200);
+  digitalWrite(GSM_ON, LOW);
 }
 
 void SIMCOM900::on(){
