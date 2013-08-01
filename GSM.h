@@ -155,6 +155,13 @@ enum getsms_ret_val_enum
   GETSMS_LAST_ITEM
 };
 
+enum inet_request_type
+{
+  GET = 0,
+  HEAD,
+  PUT,
+  DELETE
+};
 
 class GSM
 {

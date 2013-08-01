@@ -3,7 +3,7 @@
 #define _TCP_CONNECTION_TOUT_ 20
 #define _GSM_DATA_TOUT_ 10
 
-int InetGSM::httpGET(const char* server, int port, const char* path, char* result, int resultlength, char* useragent)
+int InetGSM::http(int type, const char* server, int port, const char* path, char* result, int resultlength, char* useragent)
 {
   boolean connected=false;
   int n_of_at=0;
@@ -31,8 +31,21 @@ int InetGSM::httpGET(const char* server, int port, const char* path, char* resul
   }
 
   if(!connected) return 0;
-	
-  gsm.SimpleWrite(F("GET "));
+
+	switch (type){
+    case HEAD:
+      gsm.SimpleWrite(F("HEAD "));
+      break;
+    case PUT:
+      gsm.SimpleWrite(F("PUT "));
+      break;
+    case DELETE:
+      gsm.SimpleWrite(F("DELETE "));
+      break;
+
+    default:
+      gsm.SimpleWrite(F("GET "));
+  }
   gsm.SimpleWrite(path);
   gsm.SimpleWrite(F(" HTTP/1.0\nHost: "));
   gsm.SimpleWrite(server);
