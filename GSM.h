@@ -37,8 +37,8 @@
 
 
 // pins definition
-#define GSM_ON              6 // connect GSM Module turn ON to pin 77 
-#define GSM_RESET           7 // connect GSM Module RESET to pin 35
+#define GSM_ON              46 // connect GSM Module turn ON to pin 77 
+#define GSM_RESET           47 // connect GSM Module RESET to pin 35
 //#define DTMF_OUTPUT_ENABLE  71 // connect DTMF Output Enable not used
 #define DTMF_DATA_VALID     14 // connect DTMF Data Valid to pin 14
 #define DTMF_DATA0          72 // connect DTMF Data0 to pin 72
@@ -191,7 +191,7 @@ class GSM
     char InitSMSMemory(void);
 
   protected:
-		SoftwareSerial _cell;
+		// SoftwareSerial Serial2;
     int isIP(const char* cadena);
 
   public:

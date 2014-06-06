@@ -3,13 +3,9 @@
 
 //#include <WProgram.h>
 #include <Arduino.h>
-#include <SoftwareSerial.h>
-
 
 class WideTextFinder {
 private:
-  SoftwareSerial* nSerialStream;
-
   unsigned long timeout;    // number of seconds to wait for the next char before aborting read
   unsigned long startMillis; // used for timeout measurement
   boolean debug;
@@ -19,7 +15,7 @@ private:
 public:
   // constructor: 
   // default timeout is 5 seconds
-  WideTextFinder(SoftwareSerial &stream, int timeout = 5);          // Ethernet constructor
+  WideTextFinder(int timeout = 5);  
   
   // Manage debug
   void setDebug(boolean d);

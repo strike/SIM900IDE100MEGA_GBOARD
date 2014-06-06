@@ -8,13 +8,13 @@
   {   
     char r;
     startMillis = millis();  
-    if (nSerialStream != NULL)
+    if (Serial2 != NULL)
     {     
       while(millis() < (startMillis + timeout)) 
       {
-        if (nSerialStream->available() > 0)
+        if (Serial2.available() > 0)
 	  {
-          r=nSerialStream->read();
+          r=Serial2.read();
 		  //if(debug)
 			//Serial.print(r);
           return r;
@@ -27,8 +27,7 @@
   // constructors 
   //default timeout is 5 seconds
   
-  WideTextFinder::WideTextFinder(SoftwareSerial &stream, int timeout) :
-                  nSerialStream(&stream) 
+  WideTextFinder::WideTextFinder(int timeout)
   { 
     this->timeout = timeout * 1000L;     
 	debug=true;
