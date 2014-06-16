@@ -7,14 +7,26 @@
   char WideTextFinder::read()
   {   
     char r;
-    startMillis = millis();  
-    if (nSerialStream != NULL)
+    startMillis = millis(); 
+    #ifdef __AVR_ATmega2560__ 
+      if (Serial2 != NULL)
+    #else 
+      if (nSerialStream != NULL)
+    #endif 
     {     
       while(millis() < (startMillis + timeout)) 
       {
-        if (nSerialStream->available() > 0)
+        #ifdef __AVR_ATmega2560__ 
+          if (Serial2.available() > 0)
+        #else 
+          if (nSerialStream->available() > 0)
+        #endif
 	  {
-          r=nSerialStream->read();
+          #ifdef __AVR_ATmega2560__ 
+            r=Serial2.read();
+          #else 
+            r=nSerialStream->read();
+          #endif
 		  //if(debug)
 			//Serial.print(r);
           return r;
@@ -27,9 +39,13 @@
   // constructors 
   //default timeout is 5 seconds
   
-  WideTextFinder::WideTextFinder(SoftwareSerial &stream, int timeout) :
-                  nSerialStream(&stream) 
-  { 
+  #ifdef __AVR_ATmega2560__ 
+    WideTextFinder::WideTextFinder(int timeout)
+  #else 
+    WideTextFinder::WideTextFinder(SoftwareSerial &stream, int timeout) :
+                    nSerialStream(&stream) 
+  #endif
+  {
     this->timeout = timeout * 1000L;     
 	debug=true;
   }

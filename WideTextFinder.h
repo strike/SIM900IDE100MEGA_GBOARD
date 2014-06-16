@@ -3,12 +3,19 @@
 
 //#include <WProgram.h>
 #include <Arduino.h>
-#include <SoftwareSerial.h>
+
+#ifdef __AVR_ATmega2560__ 
+#else 
+  #include <SoftwareSerial.h>
+#endif
 
 
 class WideTextFinder {
 private:
-  SoftwareSerial* nSerialStream;
+  #ifdef __AVR_ATmega2560__ 
+  #else 
+    SoftwareSerial* nSerialStream;
+  #endif
 
   unsigned long timeout;    // number of seconds to wait for the next char before aborting read
   unsigned long startMillis; // used for timeout measurement
@@ -19,7 +26,11 @@ private:
 public:
   // constructor: 
   // default timeout is 5 seconds
-  WideTextFinder(SoftwareSerial &stream, int timeout = 5);          // Ethernet constructor
+  #ifdef __AVR_ATmega2560__ 
+    WideTextFinder(int timeout = 5);          // Ethernet constructor
+  #else 
+    WideTextFinder(SoftwareSerial &stream, int timeout = 5);          // Ethernet constructor
+  #endif
   
   // Manage debug
   void setDebug(boolean d);

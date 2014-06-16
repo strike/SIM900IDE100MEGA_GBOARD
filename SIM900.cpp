@@ -88,7 +88,11 @@ int SIMCOM900::configandwait(char* pin)
 	//while (_tf.find("+CGREG: 0,"))  // CHANGE!!!!
 	{
 		//connCode=_tf.getValue();
-		connCode=_cell.read();
+		#ifdef __AVR_ATmega2560__ 
+		  connCode = Serial2.read(); 
+ 		#else 
+		  connCode= _cell.read(); 
+		#endif
 		if((connCode==1)||(connCode==5))
 		{
 		  setStatus(READY);
@@ -136,22 +140,46 @@ int SIMCOM900::read(char* result, int resultlength)
     return 0;
     
    //_tf.setTimeout(_GSM_DATA_TOUT_);
-   //_cell.flush();
+   //#ifdef __AVR_ATmega2560__ 
+   //  Serial2.flush(); 
+    //#else 
+   //  _cell.flush(); 
+   //#endif
   SimpleWriteln(F("AT+QENG=1,0")); 
   SimpleWriteln(F("AT+QENG?")); 
   if(gsm.WaitResp(5000, 50, "+QENG")!=RX_FINISHED_STR_NOT_RECV)
     return 0;
 
   //mcc=_tf.getValue(); // The first one is 0
-  mcc=_cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    mcc = Serial2.read(); 
+  #else 
+    mcc = _cell.read(); 
+  #endif
   //mcc=_tf.getValue();
-  mcc=_cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    mcc = Serial2.read(); 
+  #else 
+    mcc = _cell.read(); 
+  #endif
   //mnc=_tf.getValue();
-  mnc=_cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    mnc = Serial2.read(); 
+  #else 
+    mnc = _cell.read(); 
+  #endif
   //lac=_tf.getValue();
-  lac=_cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    lac = Serial2.read(); 
+  #else 
+    lac = _cell.read(); 
+  #endif
   //cellid=_tf.getValue();
-  cellid=_cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    cellid = Serial2.read(); 
+  #else 
+    cellid = _cell.read(); 
+  #endif
   
   gsm.WaitResp(5000, 50, "+OK");
   SimpleWriteln(F("AT+QENG=1,0")); 
@@ -167,13 +195,21 @@ boolean SIMCOM900::readSMS(char* msg, int msglength, char* number, int nlength)
     return false;
   */
   //_tf.setTimeout(_GSM_DATA_TOUT_);
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
   SimpleWriteln(F("AT+CMGL=\"REC UNREAD\",1"));
   if(gsm.WaitResp(5000, 50, "+CMGL")!=RX_FINISHED_STR_RECV)
   //if(_tf.find("+CMGL: "))
   {
     //index=_tf.getValue();
-	index=_cell.read();
+	#ifdef __AVR_ATmega2560__ 
+	 index = Serial2.read(); 
+ 	#else 
+	 index = _cell.read(); 
+	#endif
 
 	_tf.getString("\"+", "\"", number, nlength);
 
@@ -203,7 +239,11 @@ boolean SIMCOM900::readCall(char* number, int nlength)
 
     SimpleWriteln(F("ATH"));
     delay(1000);
-    //_cell.flush();
+    //#ifdef __AVR_ATmega2560__ 
+    //  Serial2.flush(); 
+     //#else 
+    //  _cell.flush(); 
+    //#endif
     return true;
   };
   return false;
@@ -234,7 +274,11 @@ int SIMCOM900::setPIN(char *pin)
       
   //_tf.setTimeout(_GSM_DATA_TOUT_);	//Timeout for expecting modem responses.
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   //AT command to set PIN.
   SimpleWrite(F("AT+CPIN="));
@@ -255,7 +299,11 @@ int SIMCOM900::changeNSIPmode(char mode)
     //if (getStatus()!=ATTACHED)
     //    return 0;
 
-    //_cell.flush();
+    //#ifdef __AVR_ATmega2560__ 
+    //  Serial2.flush(); 
+     //#else 
+    //  _cell.flush(); 
+    //#endif
 
     SimpleWrite(F("AT+QIDNSIP="));
 	SimpleWriteln(mode);
@@ -273,7 +321,11 @@ int SIMCOM900::getCCI(char *cci)
       
   //_tf.setTimeout(_GSM_DATA_TOUT_);	//Timeout for expecting modem responses.
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   //AT command to get CCID.
   SimpleWriteln(F("AT+QCCID"));
@@ -294,7 +346,11 @@ int SIMCOM900::getIMEI(char *imei)
       
   //_tf.setTimeout(_GSM_DATA_TOUT_);	//Timeout for expecting modem responses.
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   //AT command to get IMEI.
   SimpleWriteln(F("AT+GSN"));
@@ -312,65 +368,119 @@ int SIMCOM900::getIMEI(char *imei)
 
 uint8_t SIMCOM900::read()
 {
-  return _cell.read();
+  #ifdef __AVR_ATmega2560__ 
+    return Serial2.read(); 
+  #else 
+    return _cell.read(); 
+  #endif
 }
 
 void SIMCOM900::SimpleRead()
 {
 	char datain;
-	if(_cell.available()>0){
-		datain=_cell.read();
-		if(datain>0){
-			Serial.print(datain);
-		}
+	#ifdef __AVR_ATmega2560__ 
+	 if( Serial2.available()>0){ 
+ 	#else 
+	 if( _cell.available()>0){ 
+	#endif
+
+  	#ifdef __AVR_ATmega2560__ 
+  		datain = Serial2.read(); 
+   	#else 
+  		datain = _cell.read(); 
+  	#endif
+    	if(datain>0){
+    		Serial.print(datain);
+    	}
 	}
 }
 
 void SIMCOM900::SimpleWrite(const __FlashStringHelper *comm)
 {
-  _cell.write_P(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(comm); 
+   #else 
+    _cell.write_P(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWrite(char *comm)
 {
-  _cell.print(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(comm); 
+   #else 
+    _cell.print(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWrite(const char *comm)
 {
-  _cell.print(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(comm); 
+   #else 
+    _cell.print(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWrite(int comm)
 {
-	_cell.print(comm);
+	#ifdef __AVR_ATmega2560__ 
+	  Serial2.print(comm); 
+ 	#else 
+	  _cell.print(comm); 
+	#endif
 }
 
 void SIMCOM900::SimpleWriteln(const __FlashStringHelper *comm)
 {
-  _cell.writeln_P(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.println(comm); 
+   #else 
+    _cell.writeln_P(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWriteln(char *comm)
 {
-  _cell.println(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.println(comm); 
+   #else 
+    _cell.println(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWriteln(char const *comm)
 {
-  _cell.println(comm);
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.println(comm); 
+   #else 
+    _cell.println(comm); 
+  #endif
 }
 
 void SIMCOM900::SimpleWriteln(int comm)
 {
-	_cell.println(comm);
+	#ifdef __AVR_ATmega2560__ 
+	  Serial2.println(comm); 
+ 	#else 
+	  _cell.println(comm); 
+	#endif
 }
 
 void SIMCOM900::WhileSimpleRead()
 {
 	char datain;
-	while(_cell.available()>0){
-		datain=_cell.read();
+	#ifdef __AVR_ATmega2560__ 
+	 while(Serial2.available()>0){ 
+ 	#else 
+	 while(_cell.available()>0){ 
+	#endif
+
+		#ifdef __AVR_ATmega2560__ 
+		  datain = Serial2.read(); 
+ 		#else 
+		  datain = _cell.read(); 
+		#endif
 		if(datain>0){
 			Serial.print(datain);
 		}
@@ -431,7 +541,11 @@ byte GSM::CheckRegistration(void)
 
   if (CLS_FREE != GetCommLineStatus()) return (REG_COMM_LINE_BUSY);
   SetCommLineStatus(CLS_ATCMD);
-  _cell.writeln_P(F("AT+CREG?"));
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.println(F("AT+CREG?")); 
+   #else 
+    _cell.writeln_P(F("AT+CREG?")); 
+  #endif
   // 5 sec. for initial comm tmout
   // 50 msec. for inter character timeout
   status = WaitResp(5000, 50); 
@@ -505,9 +619,21 @@ char GSM::SetSpeakerVolume(byte speaker_volume)
   if (speaker_volume > 14) speaker_volume = 14;
   // select speaker volume (0 to 14)
   // AT+CLVL=X<CR>   X<0..14>
-  _cell.write_P(F("AT+CLVL="));
-  _cell.print((int)speaker_volume);    
-  _cell.write_P(F("\r")); // send <CR>
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("AT+CLVL=")); 
+   #else 
+    _cell.write_P(F("AT+CLVL=")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print((int)speaker_volume);     
+   #else 
+    _cell.print((int)speaker_volume);     
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("\r")); // send <CR> 
+   #else 
+    _cell.write_P(F("\r")); // send <CR> 
+  #endif
   // 10 sec. for initial comm tmout
   // 50 msec. for inter character timeout
   if (RX_TMOUT_ERR == WaitResp(10000, 50)) {
@@ -611,9 +737,21 @@ char GSM::SendDTMFSignal(byte dtmf_tone)
   if (CLS_FREE != GetCommLineStatus()) return (ret_val);
   SetCommLineStatus(CLS_ATCMD);
   // e.g. AT+VTS=5<CR>
-  _cell.write_P(F("AT+VTS="));
-  _cell.print((int)dtmf_tone);    
-  _cell.write_P(F("\r"));
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("AT+VTS=")); 
+   #else 
+    _cell.write_P(F("AT+VTS=")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print((int)dtmf_tone);     
+   #else 
+    _cell.print((int)dtmf_tone);     
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("\r")); 
+   #else 
+    _cell.write_P(F("\r")); 
+  #endif
   // 1 sec. for initial comm tmout
   // 50 msec. for inter character timeout
   if (RX_TMOUT_ERR == WaitResp(1000, 50)) {
@@ -710,9 +848,21 @@ char GSM::GetPhoneNumber(byte position, char *phone_number)
   phone_number[0] = 0; // phone number not found yet => empty string
   
   //send "AT+CPBR=XY" - where XY = position
-  _cell.write_P(F("AT+CPBR="));
-  _cell.print((int)position);  
-  _cell.write_P(F("\r"));
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("AT+CPBR=")); 
+   #else 
+    _cell.write_P(F("AT+CPBR=")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print((int)position);   
+   #else 
+    _cell.print((int)position);   
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("\r")); 
+   #else 
+    _cell.write_P(F("\r")); 
+  #endif
 
   // 5000 msec. for initial comm tmout
   // 50 msec. for inter character timeout
@@ -784,11 +934,31 @@ char GSM::WritePhoneNumber(byte position, char *phone_number)
   //send: AT+CPBW=XY,"00420123456789"
   // where XY = position,
   //       "00420123456789" = phone number string
-  _cell.write_P(F("AT+CPBW="));
-  _cell.print((int)position);  
-  _cell.write_P(F(",\""));
-  _cell.print(phone_number);
-  _cell.write_P(F("\"\r"));
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("AT+CPBW=")); 
+   #else 
+    _cell.write_P(F("AT+CPBW=")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print((int)position);   
+   #else 
+    _cell.print((int)position);   
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F(",\"")); 
+   #else 
+    _cell.write_P(F(",\"")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(phone_number); 
+   #else 
+    _cell.print(phone_number); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("\"\r")); 
+   #else 
+    _cell.write_P(F("\"\r")); 
+  #endif
 
   // 5000 msec. for initial comm tmout
   // 50 msec. for inter character timeout
@@ -840,9 +1010,21 @@ char GSM::DelPhoneNumber(byte position)
   
   //send: AT+CPBW=XY
   // where XY = position
-  _cell.write_P(F("AT+CPBW="));
-  _cell.print((int)position);  
-  _cell.write_P(F("\r"));
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("AT+CPBW=")); 
+   #else 
+    _cell.write_P(F("AT+CPBW=")); 
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print((int)position);   
+   #else 
+    _cell.print((int)position);   
+  #endif
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.print(F("\r")); 
+   #else 
+    _cell.write_P(F("\r")); 
+  #endif
 
   // 5000 msec. for initial comm tmout
   // 50 msec. for inter character timeout

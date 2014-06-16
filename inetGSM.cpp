@@ -3,7 +3,8 @@
 #define _TCP_CONNECTION_TOUT_ 20
 #define _GSM_DATA_TOUT_ 10
 
-int InetGSM::http(int type, const char* server, int port, const char* path, char* result, int resultlength, char* useragent)
+int InetGSM::http(int type, const char* server, int port, const char* path, char* result, 
+    int resultlength, const char* host, const char* useragent)
 {
   boolean connected=false;
   int n_of_at=0;
@@ -25,9 +26,9 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
 	    	n_of_at++;
 	  }
 	  else{
-		connected=true;
-		n_of_at=3;
-	}
+		  connected=true;
+		  n_of_at=3;
+	  }
   }
 
   if(!connected) return 0;
@@ -48,14 +49,18 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
   }
   gsm.SimpleWrite(path);
   gsm.SimpleWrite(F(" HTTP/1.0\nHost: "));
-  gsm.SimpleWrite(server);
-  gsm.SimpleWrite(F("\n"));
-  gsm.SimpleWrite(F("User-Agent: "));
-  if (useragent){
-    gsm.SimpleWrite(useragent);
+  if (host){
+    gsm.SimpleWrite(host);
   } else {
-    gsm.SimpleWrite(F("Arduino"));
+    gsm.SimpleWrite(server);
   }
+
+  if (useragent){
+    gsm.SimpleWrite(F("\n"));
+    gsm.SimpleWrite(F("User-Agent: "));
+    gsm.SimpleWrite(useragent);
+  }
+
   gsm.SimpleWrite(F("\n\n"));
   gsm.SimpleWrite(end_c);
 
@@ -288,7 +293,11 @@ int InetGSM::dettachGPRS()
    
   //gsm._tf.setTimeout(_GSM_CONNECTION_TOUT_);
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   //GPRS dettachment.
   gsm.SimpleWriteln(F("AT+CGATT=0"));
@@ -318,7 +327,11 @@ int InetGSM::connectTCP(const char* server, int port)
   //if (getStatus()!=ATTACHED)
     //return 0;
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
   
   //Visit the remote TCP server.
    gsm.SimpleWrite(F("AT+CIPSTART=\"TCP\",\""));
@@ -379,7 +392,11 @@ int InetGSM::disconnectTCP()
   //gsm._tf.setTimeout(_GSM_CONNECTION_TOUT_);
 
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   //Switch to AT mode.
   //_cell << "+++" << endl;
@@ -416,7 +433,11 @@ int InetGSM::connectTCPServer(int port)
 */
   //gsm._tf.setTimeout(_GSM_CONNECTION_TOUT_);
 
-  //_cell.flush();
+  //#ifdef __AVR_ATmega2560__ 
+  //  Serial2.flush(); 
+   //#else 
+  //  _cell.flush(); 
+  //#endif
 
   // Set port
   

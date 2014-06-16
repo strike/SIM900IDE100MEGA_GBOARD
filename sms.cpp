@@ -56,7 +56,11 @@ char SMSGSM::SendSMS(char *number_str, char *message_str)
       // send SMS text
       gsm.SimpleWrite(message_str); 
       gsm.SimpleWriteln(end);
-	  //_cell.flush(); // erase rx circular buffer
+	  //#ifdef __AVR_ATmega2560__ 
+	  //  Serial2.flush(); // erase rx circular buffer 
+ 	  //#else 
+	  //  _cell.flush(); // erase rx circular buffer 
+	  //#endif
       if (RX_FINISHED_STR_RECV == gsm.WaitResp(7000, 5000, "+CMGS")) {
         // SMS was send correctly 
         ret_val = 1;

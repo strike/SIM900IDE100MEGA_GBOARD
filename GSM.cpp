@@ -28,8 +28,12 @@ based on QuectelM10 chip.
 #define _GSM_RXPIN_ 3	
 
 
-GSM::GSM():_cell(_GSM_TXPIN_,_GSM_RXPIN_),_tf(_cell, 10),_status(IDLE){
-};
+#ifdef __AVR_ATmega2560__ 
+	GSM::GSM():_status(IDLE){};
+#else 
+	GSM::GSM():_cell(_GSM_TXPIN_,_GSM_RXPIN_),_tf(_cell, 10),_status(IDLE){};
+#endif
+
 
 
 int GSM::begin(long baud_rate){
@@ -38,7 +42,11 @@ int GSM::begin(long baud_rate){
 	boolean norep=false;
 	boolean turnedON=false;
 	SetCommLineStatus(CLS_ATCMD);
-	_cell.begin(baud_rate);
+	#ifdef __AVR_ATmega2560__ 
+	  Serial2.begin(baud_rate); 
+ 	#else 
+	  _cell.begin(baud_rate); 
+	#endif
 	setStatus(IDLE); 
 
 	pinMode(GSM_ON, OUTPUT);               
@@ -83,33 +91,69 @@ int GSM::begin(long baud_rate){
 		for (int i=1;i<8;i++){
 			switch (i) {
 			case 1:
-			  _cell.begin(2400);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(2400); 
+ 			  #else 
+			    _cell.begin(2400); 
+			  #endif
 			  break;
 			  
 			case 2:
-			  _cell.begin(4800);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(4800); 
+ 			  #else 
+			    _cell.begin(4800); 
+			  #endif
 			  break;
 			  
 			case 3:
-			  _cell.begin(9600);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(9600); 
+ 			  #else 
+			    _cell.begin(9600); 
+			  #endif
 			  break;
 			   
 			case 4:
-			  _cell.begin(19200);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(19200); 
+ 			  #else 
+			    _cell.begin(19200); 
+			  #endif
 			  break;
 			  
 			case 5:
-			  _cell.begin(38400);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(38400); 
+ 			  #else 
+			    _cell.begin(38400); 
+			  #endif
 			  break;
 			  
 			case 6:
-			  _cell.begin(57600);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(57600); 
+ 			  #else 
+			    _cell.begin(57600); 
+			  #endif
 			  break;
 			  
 			case 7:
-			  _cell.begin(115200);
-			  _cell.write_P(F("AT+IPR=9600\r"));
-			  _cell.begin(9600);
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(115200); 
+ 			  #else 
+			    _cell.begin(115200); 
+			  #endif
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.print(F("AT+IPR=9600\r")); 
+ 			  #else 
+			    _cell.write_P(F("AT+IPR=9600\r")); 
+			  #endif
+			  #ifdef __AVR_ATmega2560__ 
+			    Serial2.begin(9600); 
+ 			  #else 
+			    _cell.begin(9600); 
+			  #endif
 			  delay(500);
 			  break;
   
@@ -131,11 +175,27 @@ int GSM::begin(long baud_rate){
 				#ifdef DEBUG_ON
 					Serial.println(F("DB:FOUND PREV BR"));
 				#endif
-				_cell.write_P(F("AT+IPR="));
-				_cell.print(baud_rate);    
-				_cell.write_P(F("\r")); // send <CR>
+				#ifdef __AVR_ATmega2560__ 
+				  Serial2.print(F("AT+IPR=")); 
+ 				#else 
+				  _cell.write_P(F("AT+IPR=")); 
+				#endif
+				#ifdef __AVR_ATmega2560__ 
+				  Serial2.print(baud_rate);     
+ 				#else 
+				  _cell.print(baud_rate);     
+				#endif
+				#ifdef __AVR_ATmega2560__ 
+				  Serial2.print(F("\r")); // send <CR> 
+ 				#else 
+				  _cell.write_P(F("\r")); // send <CR> 
+				#endif
 				delay(500);
-				_cell.begin(baud_rate);
+				#ifdef __AVR_ATmega2560__ 
+				  Serial2.begin(baud_rate); 
+ 				#else 
+				  _cell.begin(baud_rate); 
+				#endif
 				delay(100);
 				if (AT_RESP_OK == SendATCmdWaitResp(F("AT"), 500, 100, "OK", 5)){
 					#ifdef DEBUG_ON
@@ -168,11 +228,27 @@ int GSM::begin(long baud_rate){
 	}
 	else{
 		//just to try to fix some problems with 115200 baudrate
-		_cell.begin(115200);
+		#ifdef __AVR_ATmega2560__ 
+		  Serial2.begin(115200); 
+ 		#else 
+		  _cell.begin(115200); 
+		#endif
 		delay(1000);
-		_cell.write_P(F("AT+IPR="));
-		_cell.print(baud_rate);    
-		_cell.write_P(F("\r")); // send <CR>		
+		#ifdef __AVR_ATmega2560__ 
+		  Serial2.print(F("AT+IPR=")); 
+ 		#else 
+		  _cell.write_P(F("AT+IPR=")); 
+		#endif
+		#ifdef __AVR_ATmega2560__ 
+		  Serial2.print(baud_rate);     
+ 		#else 
+		  _cell.print(baud_rate);     
+		#endif
+		#ifdef __AVR_ATmega2560__ 
+		  Serial2.print(F("\r")); // send <CR>		 
+ 		#else 
+		  _cell.write_P(F("\r")); // send <CR>		 
+		#endif
 		return(0);
 	}
 }
@@ -303,7 +379,11 @@ char GSM::SendATCmdWaitResp(const __FlashStringHelper *AT_cmd_string,
     // so if we have no_of_attempts=1 tmout will not occurred
     if (i > 0) delay(500); 
 
-    _cell.println(AT_cmd_string);
+    #ifdef __AVR_ATmega2560__ 
+      Serial2.println(AT_cmd_string); 
+     #else 
+      _cell.println(AT_cmd_string); 
+    #endif
     status = WaitResp(start_comm_tmout, max_interchar_tmout); 
     if (status == RX_FINISHED) {
       // something was received but what was received?
@@ -340,7 +420,11 @@ char GSM::SendATCmdWaitResp(char const *AT_cmd_string,
     // so if we have no_of_attempts=1 tmout will not occurred
     if (i > 0) delay(500); 
 
-    _cell.println(AT_cmd_string);
+    #ifdef __AVR_ATmega2560__ 
+      Serial2.println(AT_cmd_string); 
+     #else 
+      _cell.println(AT_cmd_string); 
+    #endif
     status = WaitResp(start_comm_tmout, max_interchar_tmout); 
     if (status == RX_FINISHED) {
       // something was received but what was received?
@@ -385,7 +469,11 @@ byte GSM::IsRxFinished(void)
 
   if (rx_state == RX_NOT_STARTED) {
     // Reception is not started yet - check tmout
-    if (!_cell.available()) {
+    #ifdef __AVR_ATmega2560__ 
+    	if (!Serial2.available()) { 
+    #else 
+    	if (!_cell.available()) { 
+	#endif
       // still no character received => check timeout
 	/*  
 	#ifdef DEBUG_GSMRX
@@ -422,7 +510,11 @@ byte GSM::IsRxFinished(void)
     // Reception already started
     // check new received bytes
     // only in case we have place in the buffer
-    num_of_bytes = _cell.available();
+    #ifdef __AVR_ATmega2560__ 
+    	num_of_bytes = Serial2.available(); 
+    #else 
+	    num_of_bytes = _cell.available(); 
+	#endif
     // if there are some received bytes postpone the timeout
     if (num_of_bytes) prev_time = millis();
       
@@ -433,7 +525,11 @@ byte GSM::IsRxFinished(void)
         // we have still place in the GSM internal comm. buffer =>
         // move available bytes from circular buffer 
         // to the rx buffer
-        *p_comm_buf = _cell.read();
+        #ifdef __AVR_ATmega2560__ 
+        	*p_comm_buf = Serial2.read(); 
+        #else 
+        	*p_comm_buf = _cell.read(); 
+        #endif
 
         p_comm_buf++;
         comm_buf_len++;
@@ -451,7 +547,11 @@ byte GSM::IsRxFinished(void)
         // so just readout character from circular RS232 buffer 
         // to find out when communication id finished(no more characters
         // are received in inter-char timeout)
-        _cell.read();
+        #ifdef __AVR_ATmega2560__ 
+          Serial2.read(); 
+         #else 
+          _cell.read(); 
+        #endif
       }
     }
 
@@ -571,7 +671,11 @@ void GSM::RxInit(uint16_t start_comm_tmout, uint16_t max_interchar_tmout)
   comm_buf[0] = 0x00; // end of string
   p_comm_buf = &comm_buf[0];
   comm_buf_len = 0;
-  _cell.flush(); // erase rx circular buffer
+  #ifdef __AVR_ATmega2560__ 
+    Serial2.flush(); // erase rx circular buffer 
+   #else 
+    _cell.flush(); // erase rx circular buffer 
+  #endif
 }
 
 void GSM::Echo(byte state)
@@ -580,9 +684,21 @@ void GSM::Echo(byte state)
 	{
 	  SetCommLineStatus(CLS_ATCMD);
 
-	  _cell.write_P(F("ATE"));
-	  _cell.print((int)state);    
-	  _cell.write_P(F("\r"));
+	  #ifdef __AVR_ATmega2560__ 
+	    Serial2.print(F("ATE")); 
+ 	  #else 
+	    _cell.write_P(F("ATE")); 
+	  #endif
+	  #ifdef __AVR_ATmega2560__ 
+	    Serial2.print((int)state);     
+ 	  #else 
+	    _cell.print((int)state);     
+	  #endif
+	  #ifdef __AVR_ATmega2560__ 
+	    Serial2.print(F("\r")); 
+ 	  #else 
+	    _cell.write_P(F("\r")); 
+	  #endif
 	  delay(500);
 	  SetCommLineStatus(CLS_FREE);
 	}
