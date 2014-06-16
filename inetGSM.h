@@ -12,6 +12,7 @@ class InetGSM
     
   public:
     int http(int type, const char* server, int port, const char* path, char* result, int resultlength, const char* host = NULL, const char* useragent = NULL);
+    int httpGET(const char* server, int port, const char* path, char* result, int resultlength);
     int httpPOST(const char* server, int port, const char* path, const char* parameters, char* result, int resultlength);
     
     // Fast and dirty solution. Should make a "mail" object. And by the moment it does not run.

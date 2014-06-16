@@ -84,6 +84,10 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
   return res;
 }
 
+int InetGSM::httpGET(const char* server, int port, const char* path, char* result, int resultlength){
+  return InetGSM::http(GET, server, port, path, result, resultlength);
+}
+
 int InetGSM::httpPOST(const char* server, int port, const char* path, const char* parameters, char* result, int resultlength)
 {
   boolean connected=false;
