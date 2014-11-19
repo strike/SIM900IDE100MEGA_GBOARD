@@ -11,7 +11,8 @@ class InetGSM
     char _buffer[BUFFERSIZE];
     
   public:
-    int http(int type, const char* server, int port, const char* path, char* result, int resultlength, const char* host = NULL, const char* useragent = NULL);
+    int http(int type, const char* server, int port, const char* path, char* result, int resultlength, const char* host = NULL, const char* useragent = NULL, const char* parameters = NULL);
+    
     int httpGET(const char* server, int port, const char* path, char* result, int resultlength);
     int httpPOST(const char* server, int port, const char* path, const char* parameters, char* result, int resultlength);
     

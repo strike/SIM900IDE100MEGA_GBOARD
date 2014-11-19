@@ -3,9 +3,7 @@
 #define _TCP_CONNECTION_TOUT_ 20
 #define _GSM_DATA_TOUT_ 10
 
-int InetGSM::http(int type, const char* server, int port, const char* path, char* result, 
-    int resultlength, const char* host, const char* useragent)
-{
+int InetGSM::http(int type, const char* server, int port, const char* path, char* result, int resultlength, const char* host, const char* useragent, const char* parameters){
   boolean connected=false;
   int n_of_at=0;
   int length_write;
@@ -13,11 +11,6 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
   end_c[0]=0x1a;
   end_c[1]='\0';
 
-  /*
-  Status = ATTACHED.
-  if(gsm.getStatus()!=GSM::ATTACHED)
-    return 0;
-  */
   while(n_of_at<3){
 	  if(!connectTCP(server, port)){
 	  	#ifdef DEBUG_ON
@@ -34,19 +27,24 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
   if(!connected) return 0;
 
 	switch (type){
+    case GET:
+      gsm.SimpleWrite(F("GET"));
+      break;
+    case POST:
+      gsm.SimpleWrite(F("POST"));
+      break;
     case HEAD:
-      gsm.SimpleWrite(F("HEAD "));
+      gsm.SimpleWrite(F("HEAD"));
       break;
     case PUT:
-      gsm.SimpleWrite(F("PUT "));
+      gsm.SimpleWrite(F("PUT"));
       break;
     case DELETE:
-      gsm.SimpleWrite(F("DELETE "));
+      gsm.SimpleWrite(F("DELETE"));
       break;
-
-    default:
-      gsm.SimpleWrite(F("GET "));
   }
+  gsm.SimpleWrite(F(" "));
+
   gsm.SimpleWrite(path);
   gsm.SimpleWrite(F(" HTTP/1.0\nHost: "));
   if (host){
@@ -59,6 +57,14 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
     gsm.SimpleWrite(F("\n"));
     gsm.SimpleWrite(F("User-Agent: "));
     gsm.SimpleWrite(useragent);
+  }
+
+  if (parameters){
+    gsm.SimpleWrite(F("Content-Length: "));
+    char itoaBuffer[8];
+    itoa(strlen(parameters),itoaBuffer,10);  
+    gsm.SimpleWrite(F("\n\n"));
+    gsm.SimpleWrite(parameters);
   }
 
   gsm.SimpleWrite(F("\n\n"));
@@ -78,9 +84,6 @@ int InetGSM::http(int type, const char* server, int port, const char* path, char
 	#endif	
   int res= gsm.read(result, resultlength);
 
-  //gsm.disconnectTCP();
-  
-  //int res=1;
   return res;
 }
 
@@ -88,72 +91,9 @@ int InetGSM::httpGET(const char* server, int port, const char* path, char* resul
   return InetGSM::http(GET, server, port, path, result, resultlength);
 }
 
-int InetGSM::httpPOST(const char* server, int port, const char* path, const char* parameters, char* result, int resultlength)
-{
-  boolean connected=false;
-  int n_of_at=0;
-  char itoaBuffer[8];
-  int num_char;
-  char end_c[2];
-  end_c[0]=0x1a;
-  end_c[1]='\0';
-
-  while(n_of_at<3){
-	  if(!connectTCP(server, port)){
-	  	#ifdef DEBUG_ON
-			Serial.println(F("DB:NOT CONN"));
-		#endif	
-	    	n_of_at++;
-	  }
-	  else{
-		connected=true;
-		n_of_at=3;
-	}
-  }
-
-  if(!connected) return 0;
-
-  gsm.SimpleWrite(F("POST "));
-  gsm.SimpleWrite(path);
-  gsm.SimpleWrite(F(" HTTP/1.1\nHost: "));
-  gsm.SimpleWrite(server);
-  gsm.SimpleWrite(F("\n"));
-  gsm.SimpleWrite(F("User-Agent: Arduino\n"));
-  gsm.SimpleWrite(F("Content-Length: "));
-  itoa(strlen(parameters),itoaBuffer,10);  
-  gsm.SimpleWrite(F("\n\n"));
-  gsm.SimpleWrite(parameters);
-  gsm.SimpleWrite(F("\n\n"));
-  gsm.SimpleWrite(end_c);
- 
-  switch(gsm.WaitResp(10000, 100, "SEND OK")){
-	case RX_TMOUT_ERR: 
-		return 0;
-	break;
-	case RX_FINISHED_STR_NOT_RECV: 
-		return 0; 
-	break;
-  }
-delay(5000);
-	#ifdef DEBUG_ON
-		Serial.println(F("DB:SENT"));
-	#endif	
-  int res= gsm.read(result, resultlength);
-
-  //gsm.disconnectTCP();
-  return res;
+int InetGSM::httpPOST(const char* server, int port, const char* path, const char* parameters, char* result, int resultlength){
+  return InetGSM::http(GET, server, port, path, result, resultlength, NULL, NULL, parameters);
 }
-/*
-int InetGSM::tweet(const char* token, const char* msg)
-{
-  //    gsm.httpPOST("arduino-tweet.appspot.com",80,"/update", "token=15514242-eWYAlMwjRQfrhnZxQiOfDXUpaYwjbSvMl1Nm5Qyg&status=Spam", buffer, 200);
-  char shortbuf[200];
-  strcpy(shortbuf,"token=");
-  strcat(shortbuf,token);
-  strcat(shortbuf,"&status=");
-  strcat(shortbuf, msg);
-  httpPOST("arduino-tweet.appspot.com",80,"/update",shortbuf, shortbuf, BUFFERSIZE);
-}*/
 
 int InetGSM::openmail(char* server, char* loginbase64, char* passbase64, char* from, char* to, char* subj)
 {

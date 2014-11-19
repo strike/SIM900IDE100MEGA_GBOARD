@@ -162,6 +162,7 @@ enum getsms_ret_val_enum
 enum inet_request_type
 {
   GET = 0,
+  POST,
   HEAD,
   PUT,
   DELETE
